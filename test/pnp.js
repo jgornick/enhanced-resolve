@@ -39,8 +39,11 @@ describe("pnp", () => {
 	beforeEach(() => {
 		pnpApi = /** @type {PnpApi} */ ({
 			mocks: new Map(),
+			ignoredIssuers: new Set(),
 			resolveToUnqualified(request, issuer) {
-				if (pnpApi.mocks.has(request)) {
+				if (pnpApi.ignoredIssuers.has(issuer)) {
+					return null;
+				} else if (pnpApi.mocks.has(request)) {
 					return pnpApi.mocks.get(request);
 				} else {
 					const err = /** @type {any} */ (new Error(`No way`));
@@ -238,6 +241,22 @@ describe("pnp", () => {
 		);
 	});
 	it("should fallback to alternatives when pnp resolving fails", done => {
+		resolver.resolve(
+			{},
+			path.resolve(__dirname, "fixtures"),
+			"m2/a.js",
+			{},
+			(err, result) => {
+				if (err) return done(err);
+				result.should.equal(path.resolve(fixture, "../pnp-a/m2/a.js"));
+				done();
+			}
+		);
+	});
+	it("should fallback to alternatives when pnp doesn't manage the issuer", done => {
+		pnpApi.ignoredIssuers.add(path.resolve(__dirname, "fixtures") + "/");
+		// Add the wrong path on purpose to make sure the issuer is ignored
+		pnpApi.mocks.set("m2", path.resolve(fixture, "pkg"));
 		resolver.resolve(
 			{},
 			path.resolve(__dirname, "fixtures"),
