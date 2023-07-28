@@ -9,8 +9,8 @@
     "LICENSE"
   ],
   "browser": {
-    "process": "./lib/util/process-browser.js",
-    "module": "./lib/util/module-browser.js"
+    "module": "./lib/util/module-browser.js",
+    "process": "./lib/util/process-browser.js"
   },
   "dependencies": {
     "graceful-fs": "^4.2.4",
@@ -68,5 +68,6 @@
   "repository": {
     "type": "git",
     "url": "git://github.com/webpack/enhanced-resolve.git"
-  }
+  },
+  "packageManager": "yarn@3.6.1"
 }
